@@ -1,5 +1,5 @@
 name: 'Cascavel Secret Scanner'
-description: 'Enterprise-grade secret detection for CI/CD pipelines. Finds hardcoded API keys, tokens, passwords, and credentials in your codebase with zero configuration. Powered by RET Tecnologia.'
+description: 'Find hardcoded API keys, tokens, and credentials in your code. 40+ patterns. Zero config. SARIF output.'
 author: 'RET Tecnologia'
 
 branding:

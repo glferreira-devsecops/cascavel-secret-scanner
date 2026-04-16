@@ -1,0 +1,75 @@
+name: 'Cascavel Secret Scanner'
+description: 'Enterprise-grade secret detection for CI/CD pipelines. Finds hardcoded API keys, tokens, passwords, and credentials in your codebase with zero configuration. Powered by RET Tecnologia.'
+author: 'RET Tecnologia'
+
+branding:
+  icon: 'shield'
+  color: 'orange'
+
+inputs:
+  path:
+    description: 'Root path to scan'
+    required: false
+    default: '.'
+  severity:
+    description: 'Minimum severity threshold: low, medium, high, critical'
+    required: false
+    default: 'medium'
+  fail-on-findings:
+    description: 'Exit with error code if secrets are found (blocks the pipeline)'
+    required: false
+    default: 'true'
+  exclude-paths:
+    description: 'Comma-separated glob patterns to exclude'
+    required: false
+    default: '.git,node_modules,vendor,__pycache__,.venv,dist,build,*.min.js,*.min.css,*.lock,package-lock.json,*.svg,*.png,*.jpg,*.gif,*.ico,*.woff,*.woff2,*.ttf,*.eot'
+  custom-patterns:
+    description: 'Path to a custom patterns JSON file'
+    required: false
+    default: ''
+  sarif-output:
+    description: 'Generate SARIF report for GitHub Security tab'
+    required: false
+    default: 'true'
+  max-file-size:
+    description: 'Maximum file size to scan in KB (skip large binaries)'
+    required: false
+    default: '512'
+  scan-history:
+    description: 'Also scan git history for leaked secrets (slower)'
+    required: false
+    default: 'false'
+  baseline-file:
+    description: 'Path to baseline file to suppress known findings'
+    required: false
+    default: ''
+
+outputs:
+  findings-count:
+    description: 'Total number of secrets detected'
+  critical-count:
+    description: 'Number of critical severity findings'
+  high-count:
+    description: 'Number of high severity findings'
+  sarif-path:
+    description: 'Path to the generated SARIF report'
+  report-path:
+    description: 'Path to the JSON findings report'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cascavel Secret Scanner
+      id: scan
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_SEVERITY: ${{ inputs.severity }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on-findings }}
+        INPUT_EXCLUDE: ${{ inputs.exclude-paths }}
+        INPUT_CUSTOM_PATTERNS: ${{ inputs.custom-patterns }}
+        INPUT_SARIF: ${{ inputs.sarif-output }}
+        INPUT_MAX_SIZE: ${{ inputs.max-file-size }}
+        INPUT_SCAN_HISTORY: ${{ inputs.scan-history }}
+        INPUT_BASELINE: ${{ inputs.baseline-file }}
+      run: bash "${{ github.action_path }}/scanner.sh"
